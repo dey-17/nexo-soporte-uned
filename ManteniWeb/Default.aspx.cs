@@ -38,18 +38,18 @@ namespace ManteniWeb
         {
             try {
                 Solicitud nueva = GestorSolicitudes.Registrar(ListaActual(), entrada);
-                return Respuesta(true, "Solicitud #" + nueva.Id + " registrada correctamente.");
+                return Respuesta(true, "Ticket TK-" + nueva.Id.ToString("D4") + " registrado correctamente.");
             }
             catch (ArgumentException error) { return Respuesta(false, error.Message); }
         }
 
         [WebMethod(EnableSession = true)]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public static object Procesar(int id, string estadoEsperado)
+        public static object Procesar(AtencionEntrada entrada)
         {
             try {
-                GestorSolicitudes.Procesar(ListaActual(), id, estadoEsperado);
-                return Respuesta(true, "Estado de la solicitud #" + id + " actualizado.");
+                GestorSolicitudes.Procesar(ListaActual(), entrada);
+                return Respuesta(true, entrada.Accion == "Resolver" ? "Ticket resuelto. La solución quedó registrada." : "Atención guardada. El ticket está en atención.");
             }
             catch (ArgumentException error) { return Respuesta(false, error.Message); }
         }
@@ -59,8 +59,9 @@ namespace ManteniWeb
             List<Solicitud> lista = ListaActual();
             return new { Ok = ok, Mensaje = mensaje,
                 Solicitudes = lista.OrderByDescending(s => s.Id).ToList(),
-                Resumen = new { Total = lista.Count, Pendientes = lista.Count(s => s.Estado == "Pendiente"),
-                    EnProceso = lista.Count(s => s.Estado == "En proceso"), Resueltas = lista.Count(s => s.Estado == "Resuelta") }
+                Resumen = new { Total = lista.Count, Abiertos = lista.Count(s => s.Estado == "Abierto"),
+                    EnAtencion = lista.Count(s => s.Estado == "En atención"), Resueltos = lista.Count(s => s.Estado == "Resuelto"),
+                    AltaPendiente = lista.Count(s => s.Prioridad == "Alta" && s.Estado != "Resuelto") }
             };
         }
     }
