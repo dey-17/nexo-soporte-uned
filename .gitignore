@@ -3,3 +3,12 @@
 **/obj/
 *.user
 *.suo
+# Material de entrega separado del repositorio de código.
+documentacion/
+Documentacion/
+verificacion/
+PLAN.md
+*.docx
+*.pdf
+*.puml
+*.mmd
