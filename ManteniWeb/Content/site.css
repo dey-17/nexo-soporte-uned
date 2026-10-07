@@ -8,3 +8,13 @@
 @media(max-width:1150px){.sidebar{width:205px}.workspace{margin-left:205px}main{padding:26px 22px}.register-layout{grid-template-columns:1fr}.help-card{display:none}.stats{gap:10px}.stats article{padding:18px 14px}.stats article>span:not(.stat-symbol){font-size:11px}.stat-symbol{right:10px;top:12px;width:23px;height:23px}.queue-banner h2{font-size:21px}}
 @media(max-width:850px){.sidebar{width:100%;position:static;border-right:0;border-bottom:1px solid var(--line);padding:15px 18px;gap:18px}.brand{font-size:20px}.brand small{font-size:8px}.mark{width:36px;height:36px;font-size:27px}.nav-label,.sidebar-note,.sidebar-bottom{display:none}nav{flex-direction:row;gap:5px}.tab{flex:1;padding:10px;font-size:12px;justify-content:center}.tab>span{display:none}.tab.active{box-shadow:none}.workspace{margin-left:0}.top{display:none}.intro{align-items:flex-start}h1{font-size:26px}.stats{grid-template-columns:repeat(2,1fr)}.tasks{grid-template-columns:1fr}.filters{flex-wrap:wrap}.filters .search{flex-basis:100%}.filters label{flex:1}.queue-banner{align-items:flex-start}.urgent{padding-left:16px}.urgent strong{font-size:30px}.dialog-actions{flex-wrap:wrap}.dialog-actions>span{max-width:100%;width:100%}.divider-heading{display:block}footer{flex-direction:column;gap:8px}footer span:last-child{text-align:left}}
 @media(max-width:520px){main{padding:24px 15px}.intro{flex-direction:column;gap:15px}.fields{grid-template-columns:1fr}.wide{grid-column:auto}.form-card{padding:0 18px 20px}.form-footer{flex-direction:column;align-items:stretch}.section-head{padding:20px 16px}.filters{padding:0 16px 16px}.queue-banner{flex-direction:column}.urgent{border-left:0;border-top:1px solid #e8ccd3;padding:10px 0 0;width:100%}.dialog-head,.dialog-body{padding:18px}.tab{font-size:11px;padding:9px 5px}.task-meta{flex-wrap:wrap}}
+
+/* Indicador de enfoque de alto contraste para navegar con el teclado. */
+.task-footer{flex-wrap:wrap}
+.task-footer small{flex-basis:100%}
+.notice-success{padding:14px 16px;margin-bottom:18px;border:1px solid #a7cfb9;border-radius:8px;background:#edf7f1;color:#245b3b}
+input:read-only,textarea:read-only{background:#f6f7fa;color:#555d69}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+    outline:3px solid var(--red-dark);
+    outline-offset:3px;
+}

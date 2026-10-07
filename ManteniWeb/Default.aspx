@@ -1,6 +1,6 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ManteniWeb.Inicio" %>
 <!DOCTYPE html><html lang="es">
-<head runat="server"><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Nexo · Mesa de soporte</title><link rel="stylesheet" href="Content/site.css?v=2"/></head>
+<head runat="server"><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Nexo · Mesa de soporte</title><link rel="stylesheet" href="Content/site.css?v=3"/></head>
 <body><form id="principal" runat="server" novalidate>
 <aside class="sidebar">
 <a class="brand" href="Default.aspx"><span class="mark">n.</span><span>NEXO<small>MESA DE SOPORTE</small></span></a>
@@ -45,11 +45,11 @@
 <footer><span>Nexo · Mesa de soporte</span><span>Los datos de esta sesión son temporales: caducan tras 30 minutos de inactividad o al reiniciar el servidor.</span></footer>
 </main></div>
 <dialog id="detalle" aria-labelledby="detalle-titulo"><div class="dialog-head"><div><p class="eyebrow" id="detalle-id">DETALLE DEL TICKET</p><h2 id="detalle-titulo">Atención de ticket</h2></div><button type="button" class="icon-button" id="cerrar-detalle" aria-label="Cerrar detalle">×</button></div>
-<div class="dialog-body"><div id="detalle-datos"></div><div id="atencion-form"><div class="divider-heading"><h3>Registro de atención</h3><span>Complete la revisión antes de resolver.</span></div>
+<div class="dialog-body"><div id="mensaje-detalle" class="notice-success" role="status" aria-live="polite" tabindex="-1" hidden></div><div id="detalle-datos"></div><div id="atencion-form"><div class="divider-heading"><h3 id="etapa-titulo">Paso 1 · Registrar atención</h3><span id="etapa-descripcion">Registre el diagnóstico y la revisión. Este paso no cierra el ticket.</span></div>
 <div id="errores-atencion" class="errors" role="alert" hidden></div><div class="fields">
 <label>Técnico responsable<input id="tecnico" maxlength="80" placeholder="Nombre de quien atiende"/></label><label>Persona atendida<input id="persona-atendida" maxlength="80"/></label>
 <label class="wide">Diagnóstico · ¿qué problema se identificó?<textarea id="diagnostico" rows="2" maxlength="1000" placeholder="Describa la causa o el diagnóstico inicial."></textarea></label>
 <label class="wide">Revisión · ¿qué se revisó o comprobó?<textarea id="revision" rows="2" maxlength="1000" placeholder="Registre verificaciones, pruebas o acciones realizadas."></textarea></label>
-<label class="wide">Solución · ¿cómo se solucionó?<textarea id="solucion" rows="2" maxlength="1000" placeholder="Obligatorio para resolver. Explique la solución aplicada."></textarea><small>Diagnóstico y revisión: mínimo 10 caracteres. Solución obligatoria al resolver.</small></label></div>
-<div class="dialog-actions"><span id="estado-ayuda"></span><button type="button" class="secondary" id="guardar-atencion">Guardar atención</button><button type="button" class="primary" id="resolver">Resolver ticket ✓</button></div></div><div id="historial"></div></div></dialog>
-</form><noscript>Active JavaScript para utilizar la mesa de soporte.</noscript><script src="Scripts/jquery-3.7.1.min.js"></script><script src="Scripts/app.js?v=2"></script></body></html>
+<label class="wide" id="campo-solucion" hidden>Solución · ¿cómo se solucionó?<textarea id="solucion" rows="2" maxlength="1000" placeholder="Explique la solución aplicada."></textarea><small>Describa la solución con un mínimo de 10 caracteres para confirmar el cierre.</small></label></div>
+<div class="dialog-actions"><span id="estado-ayuda"></span><button type="button" class="primary" id="guardar-atencion">Guardar atención</button><button type="button" class="primary" id="resolver" hidden>Confirmar solución y cerrar ✓</button></div></div><div id="historial"></div></div></dialog>
+</form><noscript>Active JavaScript para utilizar la mesa de soporte.</noscript><script src="Scripts/jquery-3.7.1.min.js"></script><script src="Scripts/app.js?v=3"></script></body></html>

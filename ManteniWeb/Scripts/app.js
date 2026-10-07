@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
     var ocupado = false, tickets = [], seleccionado = null, versionAbierta = null, editando = false;
-    var panelActual = 'registro';
+    var panelActual = 'registro', modoCierre = false;
     function codigo(id) { return 'TK-' + String(id).padStart(4, '0'); }
     function mensaje(texto, error) {
         $('#mensaje').text(texto).toggleClass('error', !!error).prop('hidden', false);
@@ -26,7 +26,7 @@
             if (!resultado.Ok && document.getElementById('detalle').open) {
                 $('#errores-atencion').text(resultado.Mensaje).prop('hidden', false);
             }
-            if (resultado.Ok && alCompletar) alCompletar();
+            if (resultado.Ok && alCompletar) alCompletar(resultado);
         }).fail(function () {
             var texto = 'No fue posible confirmar la operación. Actualice antes de reenviarla para evitar duplicados.';
             mensaje(texto, true);
@@ -78,17 +78,23 @@
                 $('<div>').addClass('task-meta').append($('<span>').text(s.Solicitante), $('<span>').text(s.Categoria), prioridad(s.Prioridad)));
             var pie = $('<div>').addClass('task-footer').append($('<small>').text(s.Tecnico ? 'Técnico: ' + s.Tecnico : 'Sin atención registrada'));
             $('<button>').attr('type', 'button').addClass(s.Estado === 'Resuelto' ? 'secondary' : 'primary')
-                .text(s.Estado === 'Resuelto' ? 'Ver solución' : 'Atender ticket →')
+                .text(s.Estado === 'Resuelto' ? 'Ver solución' : s.Estado === 'En atención' ? 'Agregar seguimiento' : 'Atender ticket →')
                 .on('click', function () { abrir(s.Id, s.Estado !== 'Resuelto'); }).appendTo(pie);
+            if (s.Estado === 'En atención') {
+                $('<button>').attr('type', 'button').addClass('primary').text('Resolver ticket ✓')
+                    .on('click', function () { abrir(s.Id, true, true); }).appendTo(pie);
+            }
             tarjeta.append(pie); $('#acciones').append(tarjeta);
         });
     }
-    function abrir(id, editar) {
+    function abrir(id, editar, cierre) {
         seleccionado = tickets.find(function (s) { return s.Id === id; });
         if (!seleccionado) { mensaje('Este ticket ya no está en la sesión.', true); return; }
         var s = seleccionado;
         versionAbierta = s.Version;
         editando = editar && s.Estado !== 'Resuelto';
+        modoCierre = editando && !!cierre && s.Estado === 'En atención';
+        $('#mensaje-detalle').empty().prop('hidden', true);
         $('#detalle-id').text(codigo(s.Id) + ' · ' + s.Categoria);
         $('#detalle-titulo').text(s.Asunto);
         var resumen = $('<div>').addClass('detail-summary');
@@ -103,8 +109,14 @@
         $('#atencion-form [aria-invalid]').removeAttr('aria-invalid');
         $('#tecnico').val(s.Tecnico || ''); $('#persona-atendida').val(s.PersonaAtendida || s.Solicitante);
         $('#diagnostico').val(s.Diagnostico || ''); $('#revision').val(s.Revision || ''); $('#solucion').val(s.Solucion || '');
+        $('#tecnico, #persona-atendida, #diagnostico, #revision').prop('readOnly', modoCierre);
+        $('#campo-solucion').prop('hidden', !modoCierre);
+        $('#guardar-atencion').prop('hidden', modoCierre);
+        $('#resolver').prop('hidden', !modoCierre);
+        $('#etapa-titulo').text(modoCierre ? 'Paso 2 · Resolver ticket' : 'Paso 1 · Registrar atención');
+        $('#etapa-descripcion').text(modoCierre ? 'Revise la atención registrada y documente la solución.' : 'Registre el diagnóstico y la revisión. Este paso no cierra el ticket.');
         $('#resolver').prop('disabled', s.Estado !== 'En atención');
-        $('#estado-ayuda').text(s.Estado === 'Abierto' ? 'Guarde la revisión inicial antes de resolver.' : 'Documente la solución para cerrar el ticket.');
+        $('#estado-ayuda').text(modoCierre ? 'Al confirmar, el ticket quedará Resuelto y será de solo lectura.' : 'Después de guardar, podrá elegir Resolver ticket en la cola de atención.');
         $('#historial').empty().append($('<h3>').text('Historial de atención'));
         if (!s.Historial.length) $('#historial').append($('<p>').text('Todavía no hay revisiones registradas.'));
         s.Historial.slice().reverse().forEach(function (h) {
@@ -155,6 +167,7 @@
     }
     function guardarAtencion(accion) {
         if (!seleccionado || !editando || ocupado) return;
+        if ((accion === 'Resolver') !== modoCierre) return;
         var entrada = { Id: seleccionado.Id, Version: versionAbierta, Accion: accion,
             Tecnico: $('#tecnico').val().trim(), PersonaAtendida: $('#persona-atendida').val().trim(),
             Diagnostico: $('#diagnostico').val().trim(), Revision: $('#revision').val().trim(), Solucion: $('#solucion').val().trim() }, errores = [];
@@ -164,9 +177,10 @@
             ['#solucion', entrada.Solucion, accion === 'Resolver' ? 10 : 0, 1000, 'Solución']].forEach(function (r) {
                 if (r[1].length < r[2] || r[1].length > r[3]) { errores.push(r[4] + ': entre ' + r[2] + ' y ' + r[3] + ' caracteres.'); $(r[0]).attr('aria-invalid', 'true'); }
             });
-        if (erroresEn('#errores-atencion', errores)) enviar('Procesar', { entrada: entrada }, function () {
-            abrir(entrada.Id, accion !== 'Resolver');
-            if (accion !== 'Resolver') $('#errores-atencion').prop('hidden', true);
+        if (erroresEn('#errores-atencion', errores)) enviar('Procesar', { entrada: entrada }, function (resultado) {
+            abrir(entrada.Id, false);
+            $('#mensaje-detalle').text(resultado.Mensaje + (accion === 'Resolver' ? '' : ' Cierre esta ventana y elija Resolver ticket cuando tenga la solución.'))
+                .prop('hidden', false).trigger('focus');
         });
     }
     $(function () {

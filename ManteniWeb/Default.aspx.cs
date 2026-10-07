@@ -49,7 +49,7 @@ namespace ManteniWeb
         {
             try {
                 GestorSolicitudes.Procesar(ListaActual(), entrada);
-                return Respuesta(true, entrada.Accion == "Resolver" ? "Ticket resuelto. La solución quedó registrada." : "Atención guardada. El ticket está en atención.");
+                return Respuesta(true, entrada.Accion == "Resolver" ? "Ticket resuelto. La solución quedó registrada y el ticket está cerrado." : "Atención registrada. El ticket queda en atención; todavía no está cerrado.");
             }
             catch (ArgumentException error) { return Respuesta(false, error.Message); }
         }
